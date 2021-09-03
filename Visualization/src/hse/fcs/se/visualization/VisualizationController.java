@@ -758,6 +758,12 @@ public class VisualizationController implements Initializable {
 
         currentFrameSlider.setMin(model.minFrame);
         currentFrameSlider.setMax(model.maxFrame);
+        if (newFrame < model.minFrame) {
+            newFrame = model.minFrame;
+        }
+        if (newFrame > model.maxFrame) {
+            newFrame = model.maxFrame;
+        }
         currentFrameSlider.setValue(newFrame - 1);
         currentFrameSlider.setValue(newFrame + 1);
         currentFrameSlider.setValue(newFrame);
@@ -881,6 +887,7 @@ public class VisualizationController implements Initializable {
                 }
             }
         } catch (IndexOutOfBoundsException e) {
+
         }
     }
 
