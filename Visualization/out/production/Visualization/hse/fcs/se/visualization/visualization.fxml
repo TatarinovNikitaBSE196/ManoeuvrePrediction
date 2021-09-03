@@ -18,7 +18,7 @@
             <MenuItem fx:id="inDChoiceMenuItem" text="inD" onAction="#inDChoiceMenuItemOnAction"/>
             <MenuItem fx:id="rounDChoiceMenuItem" text="rounD" onAction="#rounDChoiceMenuItemOnAction"/>
         </Menu>
-        <Menu fx:id="frameChoiceMenu" style="-fx-pref-width: 60">
+        <Menu fx:id="fileNumberChoiceMenu" style="-fx-pref-width: 60">
         </Menu>
     </MenuBar>
     <MenuBar fx:id="modeChoiceMenuBar" style="-fx-padding: 0"

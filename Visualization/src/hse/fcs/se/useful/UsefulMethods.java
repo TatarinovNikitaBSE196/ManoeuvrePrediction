@@ -31,12 +31,20 @@ public class UsefulMethods {
         return splitString;
     }
 
-    public static String join(@NotNull ArrayList<@NotNull String> splitString, @NotNull String separator){
-        if(splitString.size() == 0){
+    /**
+     * Joins the given splitString with the given separator.
+     *
+     * @param splitString String to join by the given separator
+     * @param separator   Separator for joining the given splitString
+     * @return {@link String} of the given splitString, joined with the given separator
+     * @throws NullPointerException If either splitString or separator is null
+     */
+    public static String join(@NotNull ArrayList<@NotNull String> splitString, @NotNull String separator) {
+        if (splitString.size() == 0) {
             return "";
         }
         StringBuilder result = new StringBuilder(splitString.get(0));
-        for(int i = 1; i < splitString.size(); i++){
+        for (int i = 1; i < splitString.size(); i++) {
             result.append(separator).append(splitString.get(i));
         }
         return result.toString();

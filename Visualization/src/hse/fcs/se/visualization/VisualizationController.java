@@ -73,7 +73,7 @@ public class VisualizationController implements Initializable {
     @FXML
     MenuItem rounDChoiceMenuItem;
     @FXML
-    Menu frameChoiceMenu;
+    Menu fileNumberChoiceMenu;
     @FXML
     MenuBar modeChoiceMenuBar;
     @FXML
@@ -709,10 +709,10 @@ public class VisualizationController implements Initializable {
             return;
         }
         datasetChoiceMenu.setText(newDatasetName);
-        frameChoiceMenu.getItems().clear();
+        fileNumberChoiceMenu.getItems().clear();
         for (int i = model.minFileNumber; i < model.maxFileNumber + 1; i++) {
-            frameChoiceMenu.getItems().add(new MenuItem(String.valueOf(i)));
-            final MenuItem menuItem = frameChoiceMenu.getItems().get(i - model.minFileNumber);
+            fileNumberChoiceMenu.getItems().add(new MenuItem(String.valueOf(i)));
+            final MenuItem menuItem = fileNumberChoiceMenu.getItems().get(i - model.minFileNumber);
             menuItem.setOnAction(event -> {
                 try {
                     model.refresh(Integer.parseInt(menuItem.getText()));
@@ -721,11 +721,11 @@ public class VisualizationController implements Initializable {
                     UsefulMethods.showAlert(Alert.AlertType.ERROR, "Problems with reading dataset files",
                             e.getClass().toString(), e.getMessage());
                 }
-                frameChoiceMenu.setText(menuItem.getText());
+                fileNumberChoiceMenu.setText(menuItem.getText());
                 uploadMap(model.minFrame);
             });
         }
-        frameChoiceMenu.setText(String.valueOf(newFileNumber));
+        fileNumberChoiceMenu.setText(String.valueOf(newFileNumber));
         uploadMap(newFrame);
     }
 
@@ -1577,6 +1577,8 @@ public class VisualizationController implements Initializable {
 
     ArrayList<ArrayList<String>> getTracksOfFrame() {
         ArrayList<ArrayList<String>> tracksInFrame = new ArrayList<>();
+        double heading, speed, acceleration;
+        double[] angle = new double[2];
         for (int i = 0; i < parametersOfVehiclesAtFrame.size(); i++) {
             tracksInFrame.add(new ArrayList<>());
 
@@ -1593,11 +1595,36 @@ public class VisualizationController implements Initializable {
             tracksInFrame.get(i).add(parametersOfVehiclesAtFrame.get(i).get(5).toString());
             tracksInFrame.get(i).add(parametersOfVehiclesAtFrame.get(i).get(6).toString());
             tracksInFrame.get(i).add(parametersOfVehiclesAtFrame.get(i).get(7).toString());
-            //TODO
-            tracksInFrame.get(i).add("0");
-            tracksInFrame.get(i).add("0");
-            tracksInFrame.get(i).add("0");
-            tracksInFrame.get(i).add("0");
+
+            speed = Math.sqrt(Math.pow(parametersOfVehiclesAtFrame.get(i).get(4), 2) +
+                    Math.pow(parametersOfVehiclesAtFrame.get(i).get(5), 2));
+            acceleration = Math.sqrt(Math.pow(parametersOfVehiclesAtFrame.get(i).get(6), 2) +
+                    Math.pow(parametersOfVehiclesAtFrame.get(i).get(7), 2));
+            heading = parametersOfVehiclesAtFrame.get(i).get(8) * Math.PI / 180;
+            for (int j = 0; j < 2; j++) {
+                if (parametersOfVehiclesAtFrame.get(i).get(4 + 2 * j) == 0) {
+                    if (parametersOfVehiclesAtFrame.get(i).get(5 + 2 * j) > 0) {
+                        angle[j] = Math.PI / 2;
+                    } else if (parametersOfVehiclesAtFrame.get(i).get(5 + 2 * j) < 0) {
+                        angle[j] = 3 * Math.PI / 2;
+                    } else {
+                        angle[j] = heading;
+                    }
+                } else {
+                    angle[j] = Math.atan(parametersOfVehiclesAtFrame.get(i).get(5 + 2 * j) /
+                            parametersOfVehiclesAtFrame.get(i).get(4 + 2 * j));
+                    if (parametersOfVehiclesAtFrame.get(i).get(4 + 2 * j) < 0) {
+                        angle[j] += Math.PI;
+                    }
+                    if (angle[j] < 0) {
+                        angle[j] += 2 * Math.PI;
+                    }
+                }
+            }
+            tracksInFrame.get(i).add(String.valueOf(speed * Math.cos(angle[0] - heading)));
+            tracksInFrame.get(i).add(String.valueOf(speed * Math.sin(angle[0] - heading)));
+            tracksInFrame.get(i).add(String.valueOf(acceleration * Math.cos(angle[1] - heading)));
+            tracksInFrame.get(i).add(String.valueOf(acceleration * Math.sin(angle[1] - heading)));
         }
         return tracksInFrame;
     }
